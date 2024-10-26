@@ -21,16 +21,16 @@ func main() {
 
 	x := 0
 
-	cancel := c.RenderBlock(10,
+	cancel := c.RenderBlock(100,
 		func() string {
 			s := ""
-			s = fmt.Sprintf("%sstart of block\n", s)
-			s = fmt.Sprintf("%smaking a block\n", s)
-			s = fmt.Sprintf("%smaking a block\n", s)
-			s = fmt.Sprintf("%smaking a block\n", s)
-			s = fmt.Sprintf("%smaking a block\n", s)
-			s = fmt.Sprintf("%smaking a block %d\n", s, x)
-			s = fmt.Sprintf("%sPress Enter to stop\n", s)
+			s = fmt.Sprintf("%s--------------\n", s)
+			s = fmt.Sprintf("%s  making a block\n", s)
+			s = fmt.Sprintf("%s  making a block\n", s)
+			s = fmt.Sprintf("%s  making a block\n", s)
+			s = fmt.Sprintf("%s  making a block\n", s)
+			s = fmt.Sprintf("%s  making a block %d\n", s, x)
+			s = fmt.Sprintf("%s  Press Enter to stop", s)
 
 			x++
 			return s

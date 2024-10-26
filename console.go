@@ -1,13 +1,13 @@
 package console
 
 import (
-	"bytes"
-	"console/ansi"
 	"context"
 	"fmt"
 	"io"
 	"strings"
 	"time"
+
+	"console/ansi"
 )
 
 type Console struct {
@@ -19,7 +19,7 @@ type Console struct {
 
 func MakeConsole(r io.Reader, w io.Writer) Console {
 	c := Console{reader: r, writer: w}
-	c.renderer = &renderer{writer: w}
+	c.renderer = &renderer{}
 	return c
 }
 
@@ -39,34 +39,27 @@ func (c Console) RenderBlock(rateHz uint, genMsg func() string) context.CancelFu
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				b := c.renderer.render(genMsg())
-				c.writer.Write(b)
-				//io.WriteString(c.writer, string(b))
+				io.WriteString(c.writer,
+					c.renderer.render(genMsg()))
 			}
 		}
-
 	}()
 
 	return cancel
 }
 
 type renderer struct {
-	writer        io.Writer
 	lastLineCount byte
 }
 
-func (r *renderer) render(msg string) []byte {
+func (r *renderer) render(msg string) string {
 
-	a := bytes.NewBufferString(
-		ansi.Cursor(ansi.Up, r.lastLineCount) +
-			ansi.Cursor(ansi.Left, 200) +
-			ansi.ClearDown(),
-	).Bytes()
+	b := ansi.Cursor(ansi.Up, r.lastLineCount) +
+		ansi.Cursor(ansi.Left, 200) +
+		ansi.ClearDown() +
+		msg
 
-	b := bytes.NewBufferString(msg).Bytes()
+	r.lastLineCount = byte(strings.Count(msg, "\n"))
 
-	lines := strings.Split(msg, "\n")
-	r.lastLineCount = byte(len(lines)) - 1
-
-	return append(a, b...)
+	return b
 }
