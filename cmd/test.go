@@ -25,10 +25,10 @@ func main() {
 	cancel := c.RenderBlock(100,
 		func() string {
 			s := ""
-			s = fmt.Sprintf("%s--------------\n", s)
+			s = fmt.Sprintf("%s-------------- %d\n", s, x)
 			s = fmt.Sprintf("%s  making a block\n", s)
 			s = fmt.Sprintf("%s  making a block\n", s)
-			s = fmt.Sprintf("%s  making a block\n", s)
+			s = fmt.Sprintf("%s  making a block %d\n", s, x)
 			s = fmt.Sprintf("%s  making a block\n", s)
 			s = fmt.Sprintf("%s  making a block %d\n", s, x)
 			s = fmt.Sprintf("%s  Press Enter to stop", s)

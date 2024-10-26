@@ -13,13 +13,10 @@ import (
 type Console struct {
 	reader io.Reader
 	writer io.Writer
-
-	renderer *renderer
 }
 
 func MakeConsole(r io.Reader, w io.Writer) Console {
 	c := Console{reader: r, writer: w}
-	c.renderer = &renderer{}
 	return c
 }
 
@@ -34,13 +31,13 @@ func (c Console) RenderBlock(rateHz uint, genMsg func() string) context.CancelFu
 		ticker := time.NewTicker(time.Duration((1.0 / float64(rateHz)) * float64(time.Second)))
 		defer ticker.Stop()
 
+		r := newRenderer(c.writer)
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				io.WriteString(c.writer,
-					c.renderer.render(genMsg()))
+				r.render(genMsg())
 			}
 		}
 	}()
@@ -49,17 +46,23 @@ func (c Console) RenderBlock(rateHz uint, genMsg func() string) context.CancelFu
 }
 
 type renderer struct {
+	writer        io.Writer
 	lastLineCount byte
 }
 
-func (r *renderer) render(msg string) string {
+func newRenderer(w io.Writer) *renderer {
+	return &renderer{writer: w}
+}
 
-	b := ansi.Cursor(ansi.Up, r.lastLineCount) +
-		ansi.Cursor(ansi.Left, 200) +
-		ansi.ClearDown() +
-		msg
+func (r *renderer) render(msg string) {
+
+	io.WriteString(r.writer, ""+
+		ansi.Cursor(ansi.Up, r.lastLineCount)+
+		ansi.Cursor(ansi.Left, 200)+
+		ansi.ClearDown(),
+	)
+
+	io.WriteString(r.writer, msg)
 
 	r.lastLineCount = byte(strings.Count(msg, "\n"))
-
-	return b
 }
