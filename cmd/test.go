@@ -1,9 +1,10 @@
 package main
 
 import (
-	"console"
 	"fmt"
 	"os"
+
+	"github.com/nadedan/console"
 )
 
 func main() {

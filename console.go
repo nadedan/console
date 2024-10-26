@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"console/ansi"
+	"github.com/nadedan/console/ansi"
 )
 
 type Console struct {
